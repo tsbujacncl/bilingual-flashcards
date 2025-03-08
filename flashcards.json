@@ -5,14 +5,83 @@
     "es": "uno",
     "interval": 3,
     "ease": 2.5,
-    "nextReview": "2025-03-11T13:11:41.868Z"
+    "nextReview": "2025-03-11T13:29:32.984Z",
+    "direction": "en-to-es"
   },
   {
     "id": 2,
     "en": "house",
     "es": "casa",
+    "interval": 1,
+    "ease": 2.5,
+    "nextReview": "2023-10-11T13:11:12.427Z"
+  },
+  {
+    "id": 3,
+    "en": "dog",
+    "es": "perro",
     "interval": 3,
     "ease": 2.5,
-    "nextReview": "2025-03-11T13:11:12.427Z"
+    "nextReview": "2025-03-11T13:31:23.656Z",
+    "direction": "en-to-es"
+  },
+  {
+    "id": 4,
+    "en": "cat",
+    "es": "gato",
+    "interval": 1,
+    "ease": 2.5,
+    "nextReview": "2023-10-11T13:10:50.000Z"
+  },
+  {
+    "id": 5,
+    "en": "water",
+    "es": "agua",
+    "interval": 3,
+    "ease": 2.5,
+    "nextReview": "2025-03-11T13:30:57.070Z",
+    "direction": "es-to-en"
+  },
+  {
+    "id": 6,
+    "en": "book",
+    "es": "libro",
+    "interval": 1,
+    "ease": 2.5,
+    "nextReview": "2023-10-11T13:10:30.000Z"
+  },
+  {
+    "id": 7,
+    "en": "table",
+    "es": "mesa",
+    "interval": 3,
+    "ease": 2.5,
+    "nextReview": "2025-03-11T13:32:10.830Z",
+    "direction": "es-to-en"
+  },
+  {
+    "id": 8,
+    "en": "car",
+    "es": "coche",
+    "interval": 1,
+    "ease": 2.5,
+    "nextReview": "2023-10-11T13:10:10.000Z"
+  },
+  {
+    "id": 9,
+    "en": "friend",
+    "es": "amigo",
+    "interval": 1,
+    "ease": 2.5,
+    "nextReview": "2023-10-11T13:10:00.000Z"
+  },
+  {
+    "id": 10,
+    "en": "sun",
+    "es": "sol",
+    "interval": 3,
+    "ease": 2.5,
+    "nextReview": "2025-03-11T13:31:45.192Z",
+    "direction": "es-to-en"
   }
 ]

@@ -9,29 +9,164 @@
   <div id="container">
     <h1>Bilingual Flashcards 🎙️</h1>
 
-    <div id="direction-buttons">
-      <button id="en-to-es">🇬🇧 English → 🇪🇸 Spanish</button>
-      <button id="es-to-en">🇪🇸 Spanish → 🇬🇧 English</button>
-    </div>
+    <!-- Flashcard Direction -->
+    <h3 id="flashcard-direction">Loading...</h3>
 
+    <!-- Flashcard Display -->
     <div id="flashcard-container">
-      <h2 id="flashcard-word">Click a button to start!</h2>
+      <h2 id="flashcard-word">Click "Next Flashcard" to start!</h2>
     </div>
 
+    <!-- Speech Recognition Button -->
     <button id="speak-btn">🎙️ Speak Answer</button>
 
+    <!-- User Response Feedback -->
     <p id="spoken-answer">You said: <span id="user-answer">...</span></p>
-    <p id="feedback"></p>
+    <p id="feedback">Waiting for your response...</p>
 
+    <!-- FSRS Review Buttons -->
     <div id="fsrs-buttons">
       <button id="again-btn">🔴 Again</button>
       <button id="good-btn">🟢 Good</button>
     </div>
 
+    <!-- Reset Progress Button -->
+    <button id="reset-btn">🔄 Reset Progress</button>
+
+    <!-- Next Flashcard Button -->
     <button id="next-btn">Next Flashcard ➡️</button>
   </div>
 
+  <!-- Include jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="/scripts/app.js"></script>
+
+  <!-- Ensure scripts execute after document is fully loaded -->
+  <script>
+    $(document).ready(() => {
+      let flashcards = [];
+      let currentCard = {};
+      let direction = 'en-to-es';
+
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.running = false;
+
+      function setRecognitionLanguage() {
+        recognition.lang = direction === 'en-to-es' ? 'es-ES' : 'en-GB';
+      }
+
+      recognition.onstart = () => {
+        recognition.running = true;
+      };
+
+      recognition.onend = () => {
+        recognition.running = false;
+      };
+
+      recognition.onresult = event => {
+        if (!event.results || !event.results[0] || !event.results[0][0].transcript) {
+          $('#user-answer').text("❌ No speech detected!");
+          return;
+        }
+
+        const spokenAnswer = event.results[0][0].transcript.trim().toLowerCase();
+        $('#user-answer').text(spokenAnswer);
+        checkAnswer(spokenAnswer);
+      };
+
+      recognition.onerror = event => {
+        $('#feedback').text(`Speech error: ${event.error}`);
+      };
+
+      $('#speak-btn').click(() => {
+        if (recognition.running) return;
+        setRecognitionLanguage();
+        recognition.start();
+      });
+
+      $.getJSON('/api/flashcards', data => {
+        flashcards = [];
+        const today = new Date();
+
+        data.forEach(card => {
+          if (new Date(card.nextReview) <= today) {
+            flashcards.push({ ...card, direction: 'en-to-es' });
+            flashcards.push({ ...card, direction: 'es-to-en' });
+          }
+        });
+
+        flashcards.sort(() => Math.random() - 0.5);
+
+        if (flashcards.length > 0) {
+          showNextCard();
+        } else {
+          $('#flashcard-direction').text("No flashcards available.");
+          $('#flashcard-word').text("");
+        }
+      }).fail(() => {
+        $('#flashcard-direction').text("❌ Error loading flashcards!");
+        $('#flashcard-word').text("");
+      });
+
+      $('#again-btn').click(() => updateFSRS('again'));
+      $('#good-btn').click(() => updateFSRS('good'));
+      $('#next-btn').click(() => showNextCard());
+
+      function showNextCard() {
+        if (flashcards.length === 0) {
+          $('#flashcard-direction').text("No flashcards available!");
+          $('#flashcard-word').text("");
+          return;
+        }
+
+        currentCard = flashcards[Math.floor(Math.random() * flashcards.length)];
+        direction = currentCard.direction;
+
+        $('#flashcard-direction').text(direction === 'en-to-es' ? "Translate English → Spanish" : "Translate Spanish → English");
+        $('#flashcard-word').text(direction === 'en-to-es' ? currentCard.en : currentCard.es);
+        $('#feedback').text('Waiting for your response...');
+        $('#user-answer').text('...');
+      }
+
+      function checkAnswer(userAnswer) {
+        const correctAnswer = direction === 'en-to-es'
+          ? currentCard.es.toLowerCase()
+          : currentCard.en.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+          $('#feedback').text('✅ Correct!');
+        } else {
+          $('#feedback').text(`❌ Incorrect! Correct answer: ${correctAnswer}`);
+        }
+      }
+
+      function updateFSRS(response) {
+        if (response === 'again') {
+          currentCard.interval = 1;
+          currentCard.ease = Math.max(1.3, currentCard.ease - 0.2);
+        } else if (response === 'good') {
+          currentCard.interval = Math.ceil(currentCard.interval * currentCard.ease);
+          currentCard.ease = Math.min(currentCard.ease + 0.1, 2.5);
+        }
+
+        const nextReviewDate = new Date();
+        nextReviewDate.setDate(nextReviewDate.getDate() + (currentCard.interval || 1));
+        currentCard.nextReview = nextReviewDate.toISOString();
+
+        $.ajax({
+          url: '/api/update-flashcard',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(currentCard),
+          success: () => {
+            $('#feedback').text('✅ Card updated successfully!');
+            showNextCard();
+          },
+          error: err => {
+            $('#feedback').text(`❌ Error updating card: ${err.responseText}`);
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
