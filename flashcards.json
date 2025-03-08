@@ -1,0 +1,7 @@
+[
+    {"id": 1, "en": "one", "es": "uno"},
+    {"id": 2, "en": "house", "es": "casa"},
+    {"id": 3, "en": "apple", "es": "manzana"},
+    {"id": 4, "en": "dog", "es": "perro"},
+    {"id": 5, "en": "water", "es": "agua"}
+  ]

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bilingual Flashcards 🎙️</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div id="container">
+    <h1>Bilingual Flashcards 🎙️</h1>
+
+    <div id="direction-buttons">
+      <button id="en-to-es">🇬🇧 English → 🇪🇸 Spanish</button>
+      <button id="es-to-en">🇪🇸 Spanish → 🇬🇧 English</button>
+    </div>
+
+    <div id="flashcard-container">
+      <h2 id="flashcard-word">Click a button to start!</h2>
+    </div>
+
+    <button id="speak-btn">🎙️ Speak Answer</button>
+
+    <p id="spoken-answer">You said: <span id="user-answer"></span></p>
+    <p id="feedback"></p>
+
+    <button id="next-btn">Next Flashcard ➡️</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/scripts/app.js"></script>
+</body>
+</html>
